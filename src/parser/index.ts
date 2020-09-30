@@ -99,7 +99,7 @@ export class Parser {
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.KeywordReturn:
-				res = this.parseReturn();
+				res = this.parseReturnStatement();
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.Identifier:
@@ -167,7 +167,7 @@ export class Parser {
 		return new Boolean(bool === 'TRUE' ? true : false);
 	}
 
-	parseReturn() {
+	parseReturnStatement() {
 		this.stream.consume().expectType(TokenType.KeywordReturn);
 		return new Return(this.parseValue());
 	}
