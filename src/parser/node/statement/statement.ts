@@ -4,6 +4,7 @@ export enum StatementType {
 	VariableDeclaration = 'variableDeclaration',
 	FunctionCall = 'functionCall',
 	FunctionDeclaration = 'functionDeclaration',
+	Return = 'return',
 }
 
 export abstract class Statement extends Node {

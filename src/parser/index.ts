@@ -13,6 +13,7 @@ import { Value } from './node/value/value';
 import { TokenStream } from './tokenStream';
 import { Block } from './node/block';
 import { Function } from './node/function';
+import { Return } from './node/statement/return';
 
 export class Parser {
 	constructor(private stream: TokenStream) {}
@@ -85,7 +86,7 @@ export class Parser {
 
 	parseStatement() {
 		const token = this.stream.peek();
-		let res: VariableDeclaration | FunctionDeclaration | FunctionCall;
+		let res: VariableDeclaration | FunctionDeclaration | FunctionCall | Return;
 		switch (token.type) {
 			case TokenType.KeywordTypeBoolean:
 			case TokenType.KeywordTypeInteger:
@@ -95,6 +96,10 @@ export class Parser {
 				return res;
 			case TokenType.KeywordFunction:
 				res = this.parseFunctionDeclarationStatement();
+				this.stream.consume().expectType(TokenType.SymbolSemiColon);
+				return res;
+			case TokenType.KeywordReturn:
+				res = this.parseReturn();
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.Identifier:
@@ -160,5 +165,10 @@ export class Parser {
 	parseBoolean() {
 		const bool = this.stream.consume().expectType(TokenType.Boolean).raw;
 		return new Boolean(bool === 'TRUE' ? true : false);
+	}
+
+	parseReturn() {
+		this.stream.consume().expectType(TokenType.KeywordReturn);
+		return new Return(this.parseValue());
 	}
 }

@@ -2,6 +2,7 @@ export enum TokenType {
 	Comment = 'comment',
 	KeywordFunction = 'keywordFunction',
 	KeywordImport = 'keywordImport',
+	KeywordReturn = 'keywordReturn',
 
 	KeywordTypeInteger = 'keywordTypeInteger',
 	KeywordTypeString = 'keywordTypeString',
@@ -32,6 +33,7 @@ export const regExps: RegExpMap = {
 
 	keywordFunction: /^fn/,
 	keywordImport: /^import/,
+	keywordReturn: /^return/,
 
 	keywordTypeInteger: /^int/,
 	keywordTypeString: /^str/,

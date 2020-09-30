@@ -2,4 +2,5 @@ fn int abc(str a, int b,) {
 	int a = 1;
 	str hello = "Hello World!";
 	bool foo = TRUE;
+	return "this is a string!";
 }
