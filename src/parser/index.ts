@@ -46,7 +46,8 @@ export class Parser {
 		const args: Argument[] = [];
 		while (this.stream.peek().type !== TokenType.SymbolCloseParen) {
 			args.push(this.parseArgument());
-			this.stream.consume().expectType(TokenType.SymbolComma);
+			if (this.stream.peek().type !== TokenType.SymbolCloseParen)
+				this.stream.consume().expectType(TokenType.SymbolComma);
 		}
 		this.stream.consume().expectType(TokenType.SymbolCloseParen);
 		return new FunctionDeclaration(id, args, returnType);
@@ -128,7 +129,8 @@ export class Parser {
 		const args: Value[] = [];
 		while (this.stream.peek().type !== TokenType.SymbolCloseParen) {
 			args.push(this.parseValue());
-			this.stream.consume().expectType(TokenType.SymbolComma);
+			if (this.stream.peek().type !== TokenType.SymbolCloseParen)
+				this.stream.consume().expectType(TokenType.SymbolComma);
 		}
 		this.stream.consume().expectType(TokenType.SymbolCloseParen);
 		return new FunctionCall(id.raw, args);
