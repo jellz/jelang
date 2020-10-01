@@ -1,7 +1,7 @@
-fn str abc(str a, int b) {
-	int c = 1;
+fn int abc(str a, int b) {
+	int c = "NOT A NUMBER";
 	str hello = "Hello World!";
 	bool foo = TRUE;
-	functionCallHere("This is a string", TRUE);
-	return "this is a string!";
+	functionCallHere("   This is a string ", TRUE);
+	return "  this is a string!     ";
 }

@@ -5,7 +5,7 @@ import { Node } from './node/node';
 import { FunctionCall } from './node/statement/functionCall';
 import { Statement } from './node/statement/statement';
 import { VariableDeclaration } from './node/statement/variableDeclaration';
-import { Type, TypeType } from './node/type';
+import { Type, TypeKind } from './node/type';
 import { Boolean } from './node/value/boolean';
 import { Integer } from './node/value/integer';
 import { String } from './node/value/string';
@@ -73,11 +73,11 @@ export class Parser {
 		const token = consume ? this.stream.consume() : this.stream.peek();
 		switch (token.type) {
 			case TokenType.KeywordTypeBoolean:
-				return new Type(TypeType.Boolean);
+				return new Type(TypeKind.Boolean);
 			case TokenType.KeywordTypeInteger:
-				return new Type(TypeType.Integer);
+				return new Type(TypeKind.Integer);
 			case TokenType.KeywordTypeString:
-				return new Type(TypeType.String);
+				return new Type(TypeKind.String);
 			default:
 				throw Error(
 					`Expected type but received ${token.type} (index ${token.start})`

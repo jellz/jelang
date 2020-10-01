@@ -1,13 +1,8 @@
 import { Node, NodeType } from '../node';
-
-export enum ValueType {
-	Integer = 'integer',
-	String = 'string',
-	Boolean = 'boolean',
-}
+import { Type } from '../type';
 
 export abstract class Value extends Node {
-	constructor(public readonly type: ValueType) {
+	constructor(public readonly type: Type) {
 		super(NodeType.Value);
 	}
 }

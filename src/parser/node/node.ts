@@ -1,3 +1,5 @@
+import { Pass } from '../../passes/pass';
+
 export enum NodeType {
 	Value = 'value',
 	Function = 'function',
@@ -10,5 +12,9 @@ export enum NodeType {
 }
 
 export abstract class Node {
+	abstract accept(pass: Pass): void;
+	getChildren(): Node[] {
+		return [];
+	}
 	constructor(public readonly nodeType: NodeType) {}
 }
