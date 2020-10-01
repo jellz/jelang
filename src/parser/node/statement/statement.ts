@@ -8,7 +8,7 @@ export enum StatementType {
 	Return = 'return',
 }
 
-export abstract class Statement extends ChildNode<Block> {
+export abstract class Statement extends ChildNode<Block | undefined> {
 	constructor(public statementType: StatementType) {
 		super(NodeType.Statement);
 	}

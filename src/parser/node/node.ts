@@ -11,11 +11,8 @@ export enum NodeType {
 	Argument = 'argument',
 }
 
-export abstract class Node<T = undefined> {
-	constructor(
-		public readonly nodeType: NodeType,
-		public parent?: T
-	) {}
+export abstract class Node {
+	constructor(public readonly nodeType: NodeType) {}
 
 	abstract accept(pass: Pass): void;
 
@@ -24,4 +21,10 @@ export abstract class Node<T = undefined> {
 	}
 }
 
-export abstract class ChildNode<T extends Node> extends Node<T> {}
+export abstract class ChildNode<T> extends Node {
+	parent?: T;
+
+	constructor(public nodeType: NodeType) {
+		super(nodeType);
+	}
+}

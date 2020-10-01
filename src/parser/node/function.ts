@@ -7,8 +7,8 @@ export class Function extends Node {
 	public id: string;
 
 	constructor(
-		public readonly declaration: FunctionDeclaration,
-		public readonly block: Block
+		public declaration: FunctionDeclaration,
+		public block: Block
 	) {
 		super(NodeType.Function);
 		this.id = declaration.id;
