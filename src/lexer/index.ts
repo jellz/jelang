@@ -5,6 +5,7 @@ export class Lexer {
 
 	constructor(private input: string) {}
 
+	// todo: shouldn't allow quotes inside strings
 	lex() {
 		const tokens: Token[] = [];
 		while (this.index < this.input.length) {
