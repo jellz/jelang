@@ -11,10 +11,17 @@ export enum NodeType {
 	Argument = 'argument',
 }
 
-export abstract class Node {
+export abstract class Node<T = undefined> {
+	constructor(
+		public readonly nodeType: NodeType,
+		public parent?: T
+	) {}
+
 	abstract accept(pass: Pass): void;
+
 	getChildren(): Node[] {
 		return [];
 	}
-	constructor(public readonly nodeType: NodeType) {}
 }
+
+export abstract class ChildNode<T extends Node> extends Node<T> {}

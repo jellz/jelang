@@ -3,6 +3,7 @@ import { Lexer } from './lexer';
 import { TokenType } from './lexer/tokens';
 import { Parser } from './parser';
 import { Function } from './parser/node/function';
+import { Node } from './parser/node/node';
 import { TokenStream } from './parser/tokenStream';
 import { TypeScriptCodeGenPass } from './passes/codegen/typeScript';
 import { PassManager } from './passes/manager';
@@ -16,6 +17,8 @@ const lexer = new Lexer(input);
 
 const out = lexer.lex().filter(t => t.type !== TokenType.Whitespace);
 // console.log('OUT: \n', out);
+
+export const symbolTable: Map<string, Node> = new Map();
 
 const stream = new TokenStream(out);
 const parser = new Parser(stream);
