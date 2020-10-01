@@ -9,7 +9,8 @@ export class Lexer {
 		const tokens: Token[] = [];
 		while (this.index < this.input.length) {
 			const nextToken = this.getNextToken();
-			if (nextToken) tokens.push(nextToken);
+			if (nextToken && nextToken.type !== TokenType.Comment)
+				tokens.push(nextToken);
 		}
 		return tokens;
 	}

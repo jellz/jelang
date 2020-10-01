@@ -1,7 +1,8 @@
 fn int abc(str a, int b) {
-	int c = "NOT A NUMBER";
-	str hello = "Hello World!";
+	int c = 10;
+	// int c = "not a number" // this will error due to assigning string to int (this is a comment!)
+	str hello = "Hello //World"!"; // you can still use // in strings however
 	bool foo = TRUE;
 	functionCallHere("   This is a string ", TRUE);
-	return "  this is a string!     ";
+	return "string here"; // this is not supposted to work
 }
