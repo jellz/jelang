@@ -21,7 +21,7 @@ export class Parser {
 	parseTopLevel(): Node {
 		switch (this.stream.peek().type) {
 			case TokenType.KeywordFunction:
-				return this.parseFunction();
+				return this.parseFunction(undefined);
 			default:
 				throw Error(
 					`Top-level token type ${this.stream.peek().type} not supported`
@@ -29,44 +29,51 @@ export class Parser {
 		}
 	}
 
-	parseFunction() {
+	parseFunction(parent?: Block) {
 		this.stream.peek().expectType(TokenType.KeywordFunction);
-		const declaration = this.parseFunctionDeclarationStatement();
-		const block = this.parseBlock();
-		return new Function(declaration, block);
+		const declaration = this.parseFunctionDeclarationStatement(parent);
+		const func = new Function(declaration, new Block([]));
+		const block = this.parseBlock(func);
+		func.block = block;
+		return func;
 	}
 
-	parseFunctionDeclarationStatement() {
+	parseFunctionDeclarationStatement(parent?: Block) {
 		// fn int abc(str a, int b)
 		//    type id (...params)
 		this.stream.consume().expectType(TokenType.KeywordFunction);
 		const returnType = this.parseType();
 		const id = this.stream.consume().expectType(TokenType.Identifier).raw;
 		this.stream.consume().expectType(TokenType.SymbolOpenParen);
-		const args: Argument[] = [];
+		const declaration = new FunctionDeclaration(id, [], returnType);
 		while (this.stream.peek().type !== TokenType.SymbolCloseParen) {
-			args.push(this.parseArgument());
+			declaration.args.push(this.parseArgument(declaration));
 			if (this.stream.peek().type !== TokenType.SymbolCloseParen)
 				this.stream.consume().expectType(TokenType.SymbolComma);
 		}
 		this.stream.consume().expectType(TokenType.SymbolCloseParen);
-		return new FunctionDeclaration(id, args, returnType);
+		declaration.parent = parent;
+		return declaration;
 	}
 
-	parseBlock() {
+	parseBlock(parent: Function) {
 		this.stream.consume().expectType(TokenType.SymbolOpenBrace);
 		const statements: Statement[] = [];
+		const block = new Block(statements);
 		while (this.stream.peek().type !== TokenType.SymbolCloseBrace) {
-			statements.push(this.parseStatement());
+			block.statements.push(this.parseStatement(block));
 		}
 		this.stream.consume().expectType(TokenType.SymbolCloseBrace);
-		return new Block(statements);
+		block.parent = parent;
+		return block;
 	}
 
-	parseArgument() {
+	parseArgument(parent: FunctionDeclaration) {
 		const type = this.parseType();
 		const id = this.stream.consume().expectType(TokenType.Identifier).raw;
-		return new Argument(id, type);
+		const arg = new Argument(id, type);
+		arg.parent = parent;
+		return arg;
 	}
 
 	parseType(consume: boolean = true) {
@@ -85,27 +92,27 @@ export class Parser {
 		}
 	}
 
-	parseStatement() {
+	parseStatement(parent?: Block) {
 		const token = this.stream.peek();
 		let res: VariableDeclaration | FunctionDeclaration | FunctionCall | Return;
 		switch (token.type) {
 			case TokenType.KeywordTypeBoolean:
 			case TokenType.KeywordTypeInteger:
 			case TokenType.KeywordTypeString:
-				res = this.parseVariableDeclarationStatement();
+				res = this.parseVariableDeclarationStatement(parent);
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.KeywordFunction:
-				res = this.parseFunctionDeclarationStatement();
+				res = this.parseFunctionDeclarationStatement(parent);
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.KeywordReturn:
-				res = this.parseReturnStatement();
+				res = this.parseReturnStatement(parent);
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.Identifier:
 				if (this.stream.peekNext().type === TokenType.SymbolOpenParen) {
-					res = this.parseFunctionCallStatement();
+					res = this.parseFunctionCallStatement(parent);
 					this.stream.consume().expectType(TokenType.SymbolSemiColon);
 					return res;
 				}
@@ -115,25 +122,29 @@ export class Parser {
 		}
 	}
 
-	parseVariableDeclarationStatement() {
+	parseVariableDeclarationStatement(parent?: Block) {
 		const type = this.parseType();
 		const id = this.stream.consume().expectType(TokenType.Identifier).raw;
 		this.stream.consume().expectType(TokenType.SymbolEqual);
 		const value = this.parseValue();
-		return new VariableDeclaration(id, type, value);
+		const declaration = new VariableDeclaration(id, type, value);
+		declaration.parent = parent;
+		return declaration;
 	}
 
-	parseFunctionCallStatement() {
+	parseFunctionCallStatement(parent?: Block) {
 		const id = this.stream.consume().expectType(TokenType.Identifier);
 		this.stream.consume().expectType(TokenType.SymbolOpenParen);
 		const args: Value[] = [];
+		const functionCall = new FunctionCall(id.raw, args);
 		while (this.stream.peek().type !== TokenType.SymbolCloseParen) {
-			args.push(this.parseValue());
+			functionCall.args.push(this.parseValue());
 			if (this.stream.peek().type !== TokenType.SymbolCloseParen)
 				this.stream.consume().expectType(TokenType.SymbolComma);
 		}
 		this.stream.consume().expectType(TokenType.SymbolCloseParen);
-		return new FunctionCall(id.raw, args);
+		functionCall.parent = parent;
+		return functionCall;
 	}
 
 	parseValue() {
@@ -169,8 +180,11 @@ export class Parser {
 		return new Boolean(bool === 'TRUE' ? true : false);
 	}
 
-	parseReturnStatement() {
+	parseReturnStatement(parent?: Block) {
+		if (!parent) throw Error('Return statement has no parent');
 		this.stream.consume().expectType(TokenType.KeywordReturn);
-		return new Return(this.parseValue());
+		const ret = new Return(this.parseValue());
+		ret.parent = parent;
+		return ret;
 	}
 }

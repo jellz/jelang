@@ -12,9 +12,19 @@ export enum NodeType {
 }
 
 export abstract class Node {
+	constructor(public readonly nodeType: NodeType) {}
+
 	abstract accept(pass: Pass): void;
+
 	getChildren(): Node[] {
 		return [];
 	}
-	constructor(public readonly nodeType: NodeType) {}
+}
+
+export abstract class ChildNode<T> extends Node {
+	parent?: T;
+
+	constructor(public nodeType: NodeType) {
+		super(nodeType);
+	}
 }

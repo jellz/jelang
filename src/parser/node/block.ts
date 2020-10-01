@@ -1,8 +1,9 @@
 import { Pass } from '../../passes/pass';
-import { Node, NodeType } from './node';
+import { Function } from './function';
+import { ChildNode, NodeType } from './node';
 import { Statement } from './statement/statement';
 
-export class Block extends Node {
+export class Block extends ChildNode<Function> {
 	constructor(public readonly statements: Statement[]) {
 		super(NodeType.Block);
 	}

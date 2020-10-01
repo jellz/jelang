@@ -1,4 +1,5 @@
-import { Node, NodeType } from '../node';
+import { Block } from '../block';
+import { ChildNode, NodeType } from '../node';
 
 export enum StatementType {
 	VariableDeclaration = 'variableDeclaration',
@@ -7,7 +8,7 @@ export enum StatementType {
 	Return = 'return',
 }
 
-export abstract class Statement extends Node {
+export abstract class Statement extends ChildNode<Block | undefined> {
 	constructor(public statementType: StatementType) {
 		super(NodeType.Statement);
 	}
