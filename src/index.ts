@@ -3,10 +3,11 @@ import { Lexer } from './lexer';
 import { TokenType } from './lexer/tokens';
 import { Parser } from './parser';
 import { Function } from './parser/node/function';
-import { Node } from './parser/node/node';
+import { SymbolTable } from './parser/node/node';
 import { TokenStream } from './parser/tokenStream';
 import { TypeScriptCodeGenPass } from './passes/codegen/typeScript';
 import { PassManager } from './passes/manager';
+import { SymbolTablePass } from './passes/symbolTable';
 import { TypeCheckPass } from './passes/type';
 
 const input = readFileSync('./spec.jll').toString();
@@ -18,7 +19,7 @@ const lexer = new Lexer(input);
 const out = lexer.lex().filter(t => t.type !== TokenType.Whitespace);
 // console.log('OUT: \n', out);
 
-export const symbolTable: Map<string, Node> = new Map();
+export const globalSymbolTable: SymbolTable = new Map();
 
 const stream = new TokenStream(out);
 const parser = new Parser(stream);
@@ -28,6 +29,7 @@ console.log(node);
 console.log((node as Function).block.statements.forEach(s => console.log(s)));
 
 const passManager = new PassManager();
+passManager.register(new SymbolTablePass());
 passManager.register(new TypeCheckPass());
 passManager.run([node]);
 
