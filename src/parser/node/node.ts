@@ -3,7 +3,6 @@ import { Pass } from '../../passes/pass';
 export enum NodeType {
 	Value = 'value',
 	Function = 'function',
-	FunctionDeclaration = 'functionDeclaration',
 	Prototype = 'prototype',
 	Block = 'block',
 	Type = 'type',

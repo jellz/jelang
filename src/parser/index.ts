@@ -1,6 +1,6 @@
 import { TokenType } from '../lexer/tokens';
 import { Argument } from './node/statement/function/argument';
-import { FunctionDeclaration } from './node/statement/function/declaration';
+import { Prototype } from './node/statement/function/prototype';
 import { Node } from './node/node';
 import { FunctionCall } from './node/statement/functionCall';
 import { Statement } from './node/statement/statement';
@@ -31,21 +31,24 @@ export class Parser {
 
 	parseFunction(parent?: Block) {
 		this.stream.peek().expectType(TokenType.KeywordFunction);
-		const declaration = this.parseFunctionDeclarationStatement(parent);
-		const func = new Function(declaration, new Block([]));
-		const block = this.parseBlock(func);
-		func.block = block;
+		const func = new Function(
+			new Prototype('', [], new Type(TypeKind.Boolean)),
+			new Block([])
+		);
+		func.prototype = this.parsePrototype(func);
+		func.block = this.parseBlock(func);
+		func.parent = parent;
 		return func;
 	}
 
-	parseFunctionDeclarationStatement(parent?: Block) {
+	parsePrototype(parent?: Function) {
 		// fn int abc(str a, int b)
 		//    type id (...params)
 		this.stream.consume().expectType(TokenType.KeywordFunction);
 		const returnType = this.parseType();
 		const id = this.stream.consume().expectType(TokenType.Identifier).raw;
 		this.stream.consume().expectType(TokenType.SymbolOpenParen);
-		const declaration = new FunctionDeclaration(id, [], returnType);
+		const declaration = new Prototype(id, [], returnType);
 		while (this.stream.peek().type !== TokenType.SymbolCloseParen) {
 			declaration.args.push(this.parseArgument(declaration));
 			if (this.stream.peek().type !== TokenType.SymbolCloseParen)
@@ -68,7 +71,7 @@ export class Parser {
 		return block;
 	}
 
-	parseArgument(parent: FunctionDeclaration) {
+	parseArgument(parent: Prototype) {
 		const type = this.parseType();
 		const id = this.stream.consume().expectType(TokenType.Identifier).raw;
 		const arg = new Argument(id, type);
@@ -94,7 +97,7 @@ export class Parser {
 
 	parseStatement(parent?: Block) {
 		const token = this.stream.peek();
-		let res: VariableDeclaration | FunctionDeclaration | FunctionCall | Return;
+		let res: VariableDeclaration | Function | FunctionCall | Return;
 		switch (token.type) {
 			case TokenType.KeywordTypeBoolean:
 			case TokenType.KeywordTypeInteger:
@@ -103,7 +106,7 @@ export class Parser {
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.KeywordFunction:
-				res = this.parseFunctionDeclarationStatement(parent);
+				res = this.parseFunction(parent);
 				this.stream.consume().expectType(TokenType.SymbolSemiColon);
 				return res;
 			case TokenType.KeywordReturn:

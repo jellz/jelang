@@ -31,7 +31,7 @@ export abstract class TypeScriptNode {
 			.toString();
 	}
 
-	static functionDeclarationStatement(
+	static functionPrototype(
 		id: string,
 		returnType: TypeScriptType,
 		args: Argument[]

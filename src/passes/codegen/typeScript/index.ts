@@ -1,6 +1,5 @@
 import { Function } from '../../../parser/node/function';
-import { Node, NodeType } from '../../../parser/node/node';
-import { FunctionDeclaration } from '../../../parser/node/statement/function/declaration';
+import { Prototype } from '../../../parser/node/statement/function/prototype';
 import { Block } from '../../../parser/node/block';
 import { FunctionCall } from '../../../parser/node/statement/functionCall';
 import { Return } from '../../../parser/node/statement/return';
@@ -23,13 +22,13 @@ export class TypeScriptCodeGenPass extends Pass {
 		this.valueStack.push(TypeScriptNode.type(node));
 	}
 
-	visitFunctionDeclarationStatement(node: FunctionDeclaration) {
+	visitPrototype(node: Prototype) {
 		this.visitType(node.returnType);
 		const returnType = this.valueStack.pop();
 		if (!returnType)
-			throw Error('Missing returnType in visitFunctionDeclaration pass');
+			throw Error('Missing returnType in visitPrototype pass');
 		this.valueStack.push(
-			TypeScriptNode.functionDeclarationStatement(
+			TypeScriptNode.functionPrototype(
 				node.id,
 				returnType,
 				node.args
@@ -48,8 +47,8 @@ export class TypeScriptCodeGenPass extends Pass {
 			case StatementType.Return:
 				this.visitReturnStatement(<Return>node);
 				break;
-			case StatementType.FunctionDeclaration:
-				this.visitFunctionDeclarationStatement(<FunctionDeclaration>node);
+			case StatementType.Function:
+				this.visitFunction(<Function>node);
 				break;
 			default:
 				throw Error(`Unknown statement type: ${node.statementType}`);
@@ -68,20 +67,20 @@ export class TypeScriptCodeGenPass extends Pass {
 	}
 
 	visitFunction(node: Function) {
-		this.visitFunctionDeclarationStatement(node.declaration);
-		const declaration = this.valueStack.pop();
+		this.visitPrototype(node.prototype);
+		const prototype = this.valueStack.pop();
 
-		console.log(declaration);
+		console.log(prototype);
 
 		this.visitBlock(node.block);
 		const block = this.valueStack.pop();
 
 		console.log(block);
 
-		if (!declaration || !block)
-			throw Error('Missing declaration or block in visitFunction pass');
+		if (!prototype || !block)
+			throw Error('Missing prototype or block in visitFunction pass');
 
-		this.valueStack.push(TypeScriptNode.function(declaration, block));
+		this.valueStack.push(TypeScriptNode.function(prototype, block));
 	}
 
 	visitVariableDeclarationStatement(node: VariableDeclaration) {
@@ -102,15 +101,5 @@ export class TypeScriptCodeGenPass extends Pass {
 
 	visitReturnStatement(node: Return) {
 		this.valueStack.push(TypeScriptNode.returnStatement(node.value));
-	}
-
-	visitTopLevel(node: Node) {
-		switch (node.nodeType) {
-			case NodeType.Function:
-				this.visitFunction(<Function>node);
-				break;
-			default:
-				throw Error(`Top-level node type ${node.nodeType} not supported`);
-		}
 	}
 }

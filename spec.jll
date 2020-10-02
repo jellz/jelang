@@ -1,8 +1,8 @@
 fn int abc(str a, int b) {
 	fn str test(int eee) {
 		return "hi";
-	}
-}
+	};
+};
 
 // int c = 10;
 // // int c = "not a number" // this will error due to assigning string to int (this is a comment!)

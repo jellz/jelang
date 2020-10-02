@@ -34,4 +34,4 @@ passManager.register(new TypeCheckPass());
 passManager.run([node]);
 
 const codegenPass = new TypeScriptCodeGenPass();
-codegenPass.visitTopLevel(node);
+codegenPass.visit(node);

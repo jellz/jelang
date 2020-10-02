@@ -5,7 +5,7 @@ import { ChildNode, NodeType, SymbolTable } from '../node';
 export enum StatementType {
 	VariableDeclaration = 'variableDeclaration',
 	FunctionCall = 'functionCall',
-	FunctionDeclaration = 'functionDeclaration',
+	Function = 'function',
 	Return = 'return',
 }
 

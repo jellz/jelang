@@ -2,7 +2,7 @@ import { Block } from '../parser/node/block';
 import { Function } from '../parser/node/function';
 import { Node } from '../parser/node/node';
 import { Argument } from '../parser/node/statement/function/argument';
-import { FunctionDeclaration } from '../parser/node/statement/function/declaration';
+import { Prototype } from '../parser/node/statement/function/prototype';
 import { FunctionCall } from '../parser/node/statement/functionCall';
 import { Return } from '../parser/node/statement/return';
 import { Statement } from '../parser/node/statement/statement';
@@ -21,11 +21,10 @@ export abstract class Pass {
 	visitBlock(_node: Block) {}
 	visitFunction(_node: Function) {}
 	visitStatement(_node: Statement) {}
-	visitFunctionDeclarationStatement(_node: FunctionDeclaration) {}
+	visitPrototype(_node: Prototype) {}
 	visitVariableDeclarationStatement(_node: VariableDeclaration) {}
 	visitFunctionCallStatement(_node: FunctionCall) {}
 	visitReturnStatement(_node: Return) {}
-	visitTopLevel(_node: Node) {}
 	visit(node: Node) {
 		node.accept(this);
 	}

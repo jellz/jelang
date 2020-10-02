@@ -1,6 +1,5 @@
 import { Function } from '../../parser/node/function';
 import { NodeType } from '../../parser/node/node';
-import { FunctionDeclaration } from '../../parser/node/statement/function/declaration';
 import { FunctionCall } from '../../parser/node/statement/functionCall';
 import { VariableDeclaration } from '../../parser/node/statement/variableDeclaration';
 import { Pass } from '../pass';
@@ -12,10 +11,10 @@ export class SymbolTablePass extends Pass {
 		statement.parentSymbolTable.set(statement.id, statement);
 	}
 
-	visitFunctionDeclarationStatement(statement: FunctionDeclaration) {
-		if (statement.parentSymbolTable.has(statement.id))
-			throw Error(`Function ${statement.id} cannot be re-declared`);
-		statement.parentSymbolTable.set(statement.id, statement);
+	visitFunction(func: Function) {
+		if (func.parentSymbolTable.has(func.id))
+			throw Error(`Function ${func.id} cannot be re-declared`);
+		func.parentSymbolTable.set(func.id, func);
 	}
 
 	visitFunctionCallStatement(statement: FunctionCall) {
@@ -26,8 +25,8 @@ export class SymbolTablePass extends Pass {
 				`Calling ${statement.id} as function, but it is ${node.nodeType}`
 			);
 		const func = <Function>node;
-		for (let i = 0; i < func.declaration.args.length; i++) {
-			console.log(func.declaration.args[i].type);
+		for (let i = 0; i < func.prototype.args.length; i++) {
+			console.log(func.prototype.args[i].type);
 		}
 	}
 }

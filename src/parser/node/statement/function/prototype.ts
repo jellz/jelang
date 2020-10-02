@@ -1,19 +1,20 @@
 import { Pass } from '../../../../passes/pass';
+import { Function } from '../../function';
+import { ChildNode, NodeType } from '../../node';
 import { Type } from '../../type';
-import { Statement, StatementType } from '../statement';
 import { Argument } from './argument';
 
-export class FunctionDeclaration extends Statement {
+export class Prototype extends ChildNode<Function> {
 	constructor(
 		public readonly id: string,
 		public readonly args: Argument[],
 		public readonly returnType: Type
 	) {
-		super(StatementType.FunctionDeclaration);
+		super(NodeType.Prototype);
 	}
 
 	accept(pass: Pass) {
-		pass.visitFunctionDeclarationStatement(this);
+		pass.visitPrototype(this);
 	}
 
 	getChildren() {
