@@ -1,8 +1,16 @@
 fn int abc(str a, int b) {
-	int c = 10;
-	// int c = "not a number" // this will error due to assigning string to int (this is a comment!)
-	str hello = "Hello"; // unfortunately the lexer allows quotes inside strings rn but let's not worry about that rn
-	bool foo = TRUE;
-	functionCallHere("   This is a string ", TRUE); // this is not a real function but it will still compile
-	return "string here"; // this is not supposed to work (ret type is int)
+	fn str test(int eee) {
+		return "hi";
+	}
 }
+
+// int c = 10;
+// // int c = "not a number" // this will error due to assigning string to int (this is a comment!)
+// str hello = "Hello"; // unfortunately the lexer allows quotes inside strings rn but let's not worry about that rn
+// bool foo = TRUE;
+// fn str test(str a) {
+//	str eee = "hi";
+//	return "ok";
+//}
+//test("   This is a string ", TRUE); // this is not a real function but it will still compile
+//return "string here"; // this is not supposed to work (ret type is int)
