@@ -11,6 +11,8 @@ export enum NodeType {
 	Argument = 'argument',
 }
 
+export type SymbolTable<T extends Node = Node> = Map<string, T>;
+
 export abstract class Node {
 	constructor(public readonly nodeType: NodeType) {}
 
